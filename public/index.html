@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d0e13">
+  <meta name="description" content="NightStream is an adult-only video discovery and creator platform with consent-first moderation.">
+  <title>NightStream — Video, on your terms</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <div id="age-gate" class="age-gate" role="dialog" aria-modal="true" aria-labelledby="age-title">
+    <div class="age-card">
+      <div class="brand-mark large">N<span>•</span></div>
+      <p class="eyebrow">ADULTS ONLY</p>
+      <h1 id="age-title">Welcome to <em>NightStream</em></h1>
+      <p>This platform is intended only for adults aged 18 and older. Confirming here is a basic entry gate, not legal identity verification.</p>
+      <div class="age-warning"><span aria-hidden="true">18+</span><span>Never upload or share content involving anyone under 18, non-consensual material, or content you are not authorized to distribute.</span></div>
+      <button id="age-enter" class="button button-primary button-wide">I am 18 or older — continue</button>
+      <a class="quiet-link" href="https://www.google.com/">Leave this page</a>
+      <p class="small muted">Your region may require additional age assurance before viewing adult content. Local law and platform rules still apply.</p>
+    </div>
+  </div>
+
+  <div id="app-shell" class="app-shell hidden">
+    <header class="topbar">
+      <button class="brand brand-button" data-view="discover" aria-label="NightStream home"><span class="brand-mark">N<span>•</span></span><span class="brand-name">nightstream</span></button>
+      <form id="search-form" class="searchbar" role="search">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input id="search-input" type="search" maxlength="100" placeholder="Search videos, tags, creators" aria-label="Search videos">
+        <button type="submit" aria-label="Search">Search</button>
+      </form>
+      <div class="top-actions">
+        <button id="upload-open" class="button button-primary compact">＋ Upload</button>
+        <button id="account-button" class="avatar-button" aria-label="Account">Sign in</button>
+        <button id="menu-toggle" class="icon-button mobile-menu" aria-label="Toggle navigation">☰</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside id="sidebar" class="sidebar" aria-label="Main navigation">
+        <p class="nav-label">DISCOVER</p>
+        <button class="nav-item active" data-view="discover"><span>◈</span> For you</button>
+        <button class="nav-item" data-view="categories"><span>▦</span> Categories</button>
+        <button class="nav-item" data-view="latest"><span>↻</span> Latest videos</button>
+        <div class="sidebar-divider"></div>
+        <p class="nav-label">YOUR SPACE</p>
+        <button class="nav-item" data-view="studio"><span>▣</span> Creator studio</button>
+        <button class="nav-item" data-view="library"><span>▤</span> My uploads</button>
+        <button class="nav-item hidden" id="moderation-nav" data-view="moderation"><span>◉</span> Moderation</button>
+        <div class="sidebar-spacer"></div>
+        <div class="sidebar-safety">
+          <span class="safety-icon">✓</span>
+          <strong>Consent matters</strong>
+          <p>Adult-only content. No exceptions for age, consent, or content rights.</p>
+          <button data-view="safety" class="text-link">Safety & policies →</button>
+        </div>
+        <p class="sidebar-foot">© <span id="year"></span> NightStream</p>
+      </aside>
+
+      <main id="main-content" class="main-content">
+        <section id="view-discover" class="view active-view">
+          <div class="hero-panel">
+            <div class="hero-copy">
+              <span class="eyebrow"><span class="live-dot"></span> YOUR NEXT DISCOVERY</span>
+              <h1>Find your <em>own</em> frequency.</h1>
+              <p>Discover creator-led video in a space built around choice, privacy, and consent.</p>
+              <div class="hero-actions"><button class="button button-primary" data-view="categories">Explore categories <span>↗</span></button><button class="button button-outline" data-view="studio">Creator studio</button></div>
+            </div>
+            <div class="hero-art" aria-hidden="true"><div class="orb orb-one"></div><div class="orb orb-two"></div><div class="hero-play">▶</div><div class="hero-ring"></div></div>
+            <div class="hero-footer"><span>01 / DISCOVER</span><span>CREATOR-FIRST · MODERATION-FIRST</span></div>
+          </div>
+          <div class="section-heading"><div><p class="eyebrow">CURATED BY YOU</p><h2>Discover videos</h2></div><span id="result-count" class="result-count">Loading library…</span></div>
+          <div id="category-chips" class="chip-row" aria-label="Filter by category"></div>
+          <div id="video-grid" class="video-grid" aria-live="polite"><div class="loading-state"><span class="spinner"></span> Connecting to the library…</div></div>
+          <div id="pagination" class="pagination hidden"><button id="load-more" class="button button-outline">Load more</button></div>
+        </section>
+
+        <section id="view-categories" class="view">
+          <div class="page-title"><p class="eyebrow">BROWSE YOUR WAY</p><h1>Explore categories</h1><p>Choose a category to narrow the library. Only reviewed and published videos appear here.</p></div>
+          <div id="category-grid" class="category-grid"></div>
+        </section>
+
+        <section id="view-latest" class="view">
+          <div class="page-title"><p class="eyebrow">FRESHLY REVIEWED</p><h1>Latest videos</h1><p>Newly approved videos, ordered by publication date.</p></div>
+          <div id="latest-grid" class="video-grid"></div>
+        </section>
+
+        <section id="view-studio" class="view">
+          <div class="page-title"><p class="eyebrow">YOUR CREATOR SPACE</p><h1>Creator studio</h1><p>Manage your submissions and publish only after review.</p></div>
+          <div class="studio-grid">
+            <article class="studio-card"><div class="studio-symbol">↥</div><h2>Upload responsibly</h2><p>Submit a video, add its title and category, and attest that every performer is an adult, gives informed consent, and that you hold the necessary rights.</p><button id="studio-upload" class="button button-primary">Start an upload</button></article>
+            <article class="studio-card"><div class="studio-symbol">◌</div><h2>Account readiness</h2><p id="readiness-message">Sign in to see your account status.</p><button id="studio-account" class="button button-outline">Account settings</button></article>
+            <article class="studio-card"><div class="studio-symbol">▤</div><h2>Submission status</h2><p>Pending review videos are not public. You can view their status in My uploads.</p><button class="button button-outline" data-view="library">View my uploads</button></article>
+          </div>
+          <div class="notice-panel"><span class="notice-icon">!</span><div><strong>Before creator uploads are enabled</strong><p>A real age-assurance provider must verify the account. The front-end age gate and date-of-birth field do not meet that requirement on their own.</p></div></div>
+        </section>
+
+        <section id="view-library" class="view">
+          <div class="page-title"><p class="eyebrow">YOUR SUBMISSIONS</p><h1>My uploads</h1><p>Track review progress and remove your own submissions.</p></div>
+          <div id="my-videos" class="table-wrap"><p class="muted">Sign in to view your submissions.</p></div>
+        </section>
+
+        <section id="view-moderation" class="view">
+          <div class="page-title"><p class="eyebrow">SAFETY OPERATIONS</p><h1>Moderation queue</h1><p>Review submitted videos and incoming reports. Actions are logged.</p></div>
+          <div class="moderation-columns"><div><h2>Pending videos</h2><div id="moderation-videos" class="moderation-list"></div></div><div><h2>Open reports</h2><div id="moderation-reports" class="moderation-list"></div></div></div>
+        </section>
+
+        <section id="view-safety" class="view">
+          <div class="page-title"><p class="eyebrow">OUR BASELINE</p><h1>Safety & policies</h1><p>Safety features are a foundation, not a substitute for legal review and ongoing operations.</p></div>
+          <div class="policy-grid">
+            <article class="policy-card"><span>01</span><h2>Adults only</h2><p>Accounts require a date of birth, but public launch requires a real age-assurance provider. The developer bypass is blocked in production.</p></article>
+            <article class="policy-card"><span>02</span><h2>Consent & rights</h2><p>Every upload requires attestations for adult performers, informed consent, and the right to distribute. Keep signed releases and identity/consent records securely outside public storage.</p></article>
+            <article class="policy-card"><span>03</span><h2>Moderation first</h2><p>New uploads stay private until a moderator approves them. Moderation decisions and report actions are audit-logged.</p></article>
+            <article class="policy-card"><span>04</span><h2>Report & remove</h2><p>Report suspected non-consensual content, underage-safety concerns, copyright issues, privacy violations, or other abuse. Treat urgent reports as time-sensitive.</p><button id="general-report" class="button button-outline">Submit a safety report</button></article>
+          </div>
+          <div class="notice-panel danger-notice"><span class="notice-icon">!</span><div><strong>Not ready for unrestricted public launch</strong><p>Configure external age assurance, email delivery, secure object storage/CDN, trained moderators, emergency escalation and takedown procedures, privacy/retention policies, and jurisdiction-specific legal review first.</p></div></div>
+        </section>
+
+        <footer class="site-footer"><span>NightStream · Original creator platform</span><span>Adult-only · Respect privacy · Respect consent</span><button data-view="safety" class="text-link">Safety centre</button></footer>
+      </main>
+    </div>
+  </div>
+
+  <div id="auth-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+    <div class="modal-backdrop" data-close="auth-modal"></div><section class="modal-panel">
+      <button class="modal-close" data-close="auth-modal" aria-label="Close">×</button>
+      <div class="modal-brand">N<span>•</span></div><p class="eyebrow">YOUR ACCOUNT</p><h2 id="auth-title">Welcome back</h2>
+      <div id="auth-tabs" class="tab-row"><button class="tab active" data-auth-mode="login">Sign in</button><button class="tab" data-auth-mode="register">Create account</button></div>
+      <form id="auth-form" class="form-stack"></form><p id="auth-message" class="form-message" role="status"></p>
+      <p class="small muted">Never share your password. Only adults aged 18+ may register. Age-assurance checks may be required.</p>
+    </section>
+  </div>
+
+  <div id="upload-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="upload-title">
+    <div class="modal-backdrop" data-close="upload-modal"></div><section class="modal-panel modal-wide">
+      <button class="modal-close" data-close="upload-modal" aria-label="Close">×</button><p class="eyebrow">CREATOR STUDIO</p><h2 id="upload-title">Submit a video</h2>
+      <div class="notice-panel compact-notice"><span class="notice-icon">!</span><div><strong>Submissions stay private during review.</strong><p>Uploads require email verification and an approved age-assurance check.</p></div></div>
+      <form id="upload-form" class="form-stack">
+        <label>Video file <input name="video" type="file" accept="video/mp4,video/webm,video/quicktime" required><small>MP4, WebM, or MOV. Maximum size is shown by the server.</small></label>
+        <label>Title <input name="title" type="text" minlength="5" maxlength="120" required placeholder="Give your video a clear title"></label>
+        <label>Description <textarea name="description" rows="3" maxlength="3000" placeholder="Add context (optional)"></textarea></label>
+        <label>Category <select name="category" required><option value="">Choose a category</option><option>Amateur</option><option>Artistic</option><option>Couples</option><option>Educational</option><option>Lifestyle</option><option>Interviews</option><option>Other</option></select></label>
+        <label>Tags <input name="tags" type="text" maxlength="300" placeholder="separate, tags, with, commas"></label>
+        <div class="attestation-box"><p class="eyebrow">REQUIRED CREATOR ATTESTATIONS</p>
+          <label class="check-label"><input name="rightsAttested" type="checkbox" value="yes" required><span>I own or am authorized to distribute this content.</span></label>
+          <label class="check-label"><input name="performersAdults" type="checkbox" value="yes" required><span>Every person depicted is an adult aged 18 or older.</span></label>
+          <label class="check-label"><input name="performerConsent" type="checkbox" value="yes" required><span>I have documented, informed consent from every depicted performer and will provide records through a secure legal process if required.</span></label>
+        </div>
+        <button class="button button-primary button-wide" type="submit">Submit for review</button><p id="upload-message" class="form-message" role="status"></p>
+      </form>
+    </section>
+  </div>
+
+  <div id="player-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="player-title">
+    <div class="modal-backdrop" data-close="player-modal"></div><section class="modal-panel player-panel">
+      <button class="modal-close light-close" data-close="player-modal" aria-label="Close video">×</button>
+      <video id="video-player" controls playsinline preload="metadata"></video>
+      <div class="player-meta"><p class="eyebrow" id="player-category"></p><h2 id="player-title">Video title</h2><p id="player-creator" class="muted"></p><p id="player-description"></p><div class="player-actions"><button id="report-video" class="button button-outline">⚑ Report video</button></div></div>
+    </section>
+  </div>
+
+  <div id="report-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="report-title">
+    <div class="modal-backdrop" data-close="report-modal"></div><section class="modal-panel">
+      <button class="modal-close" data-close="report-modal" aria-label="Close">×</button><p class="eyebrow">SAFETY & TRUST</p><h2 id="report-title">Submit a report</h2>
+      <p class="muted">Reports enter a review queue. For immediate danger, contact the appropriate local emergency or child-protection authority.</p>
+      <form id="report-form" class="form-stack"><input type="hidden" name="videoId"><label>Reason <select name="category" required><option value="">Choose a reason</option><option value="non-consensual-content">Non-consensual content</option><option value="underage-safety-concern">Underage-safety concern</option><option value="copyright">Copyright / rights</option><option value="privacy">Privacy violation</option><option value="spam">Spam or abuse</option><option value="other">Other</option></select></label><label>Details <textarea name="details" rows="4" minlength="10" maxlength="2000" required placeholder="Describe the concern without reposting or attaching the content"></textarea></label><label>Contact email (optional) <input name="contactEmail" type="email" maxlength="254" placeholder="you@example.com"></label><button class="button button-primary button-wide" type="submit">Send report</button><p id="report-message" class="form-message" role="status"></p></form>
+    </section>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+</body>
+</html>
