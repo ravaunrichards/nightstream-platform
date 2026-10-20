@@ -1,0 +1,47 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nightstream
+      POSTGRES_USER: nightstream
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local_change_me}
+    volumes:
+      - nightstream-db:/var/lib/postgresql/data
+      - ./backend/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nightstream -d nightstream"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgres://nightstream:${POSTGRES_PASSWORD:-local_change_me}@db:5432/nightstream
+      JWT_SECRET: ${JWT_SECRET:-development_only_replace_this_secret_32_chars}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:3000}
+      UPLOAD_DIR: /app/uploads
+      MAX_UPLOAD_BYTES: ${MAX_UPLOAD_BYTES:-2147483648}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-NightStream <no-reply@example.com>}
+      AGE_ASSURANCE_WEBHOOK_SECRET: ${AGE_ASSURANCE_WEBHOOK_SECRET:-development_only_replace_this_secret_32_chars}
+      AGE_ASSURANCE_DEV_BYPASS: ${AGE_ASSURANCE_DEV_BYPASS:-true}
+    ports:
+      - "3000:3000"
+    volumes:
+      - nightstream-uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  nightstream-db:
+  nightstream-uploads:
